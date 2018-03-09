@@ -15,13 +15,11 @@ The current documentation for cloud functions is lackluster (as the project is i
     * lambda-log4j
 * docker / docker-compose
 
-I left out a logging configuration.
-
 ### Installing / Running
 ```
 docker-compose up
 ```
-and then wait a while.
+and then wait a while, ~1-2 minutes right now.
 
 #### or
 (untested)

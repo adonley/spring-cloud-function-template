@@ -1,0 +1,49 @@
+# This is the function that will be activated when hosted on AWS lambda -
+# it can be overwritten from the env var FUNCTION_NAME in the lambda console.
+function:
+  name: exampleFunction
+
+spring:
+  jmx:
+    enabled: true
+
+cloud:
+  aws:
+    region:
+      static: us-east-1
+  stack:
+    auto: false
+
+---
+
+spring:
+  profiles: default
+
+server:
+  port: 8080
+
+aws:
+  dynamoDB:
+    serviceEndpoint: http://localhost:8000
+
+---
+
+spring:
+  profiles: compose
+
+server:
+  port: 8080
+
+aws:
+  dynamoDB:
+    serviceEndpoint: http://dynamo:8000
+
+---
+
+spring:
+  profiles: prod
+
+# This doesn't matter for production deployments, since it will be auto configured via env.
+aws:
+  dynamoDB:
+    serviceEndpoint: http://dynamo:8000

@@ -1,0 +1,17 @@
+version: '3'
+services:
+  example:
+    build: .
+    depends_on:
+      - dynamo
+      - sqs
+    ports:
+     - 8080:8080
+  dynamo:
+    image: dwmkerr/dynamodb
+    ports:
+      - 8000:8000
+  sqs:
+    image: graze/sqs-local
+    ports:
+      - 9324:9324

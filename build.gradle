@@ -1,0 +1,92 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.10.RELEASE'
+        wrapperVersion = '1.0.9.RELEASE'
+        shadowVersion = '2.0.1'
+    }
+    repositories {
+        jcenter()
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:${shadowVersion}"
+        classpath("org.springframework.boot.experimental:spring-boot-thin-gradle-plugin:${wrapperVersion}")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'org.springframework.boot.experimental.thin-launcher'
+
+group = 'com.andrewjdonley'
+archivesBaseName = 'functions'
+version = '0.0.1'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+}
+
+ext {
+    springCloudFunctionVersion = "1.0.0.M3"
+    awsLambdaEventsVersion = "1.2.1"
+    awsLambdaCoreVersion = "1.1.0"
+    feignVersion = "1.4.3.RELEASE"
+}
+ext['reactor.version'] = "3.0.7.RELEASE"
+
+assemble.dependsOn = [shadowJar, bootRepackage]
+
+// TODO: Make this more generic with mainclass scanning etc.
+jar {
+    manifest {
+        manifest {
+            attributes(
+                    'Manifest-Version': '1.0',
+                    'Implementation-Title': 'cloud-function-template',
+                    'Start-Class': 'com.andrewjdonley.functions.FunctionsTemplateApplication',
+                    'Main-Class': 'org.springframework.boot.loader.wrapper.ThinJarWrapper'
+            )
+        }
+    }
+}
+
+shadowJar {
+    classifier = 'aws'
+}
+
+jar.dependsOn = [thinPom]
+
+configurations {
+    testCompile.extendsFrom(compileOnly)
+}
+
+dependencies {
+    compile(
+            [group: "org.springframework.cloud", name: "spring-cloud-starter-feign", version: "${feignVersion}"],
+            [group: "org.springframework.cloud", name: "spring-cloud-function-web", version: "${springCloudFunctionVersion}"],
+            [group: "org.springframework.cloud", name: "spring-cloud-function-adapter-aws", version: "${springCloudFunctionVersion}"],
+            [group: "com.amazonaws", name: "aws-lambda-java-events", version: "${awsLambdaEventsVersion}"],
+            [group: "com.amazonaws", name: "aws-lambda-java-core", version: "${awsLambdaCoreVersion}"],
+            [group: "com.amazonaws", name: "aws-lambda-java-log4j", version: "1.0.0"],
+            [group: "io.projectreactor", name: "reactor-core", version: "3.1.5.RELEASE"],
+    )
+
+    compileOnly(
+            [group: 'org.projectlombok', name: 'lombok', version: '1.16.20']
+    )
+
+    testCompile(
+            ['org.springframework.boot:spring-boot-starter-test']
+    )
+}

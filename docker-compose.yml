@@ -2,9 +2,14 @@ version: '3'
 services:
   example:
     build: .
-    depends_on:
-      - dynamo
-      - sqs
+    #depends_on:
+    #  - dynamo
+    #  - sqs
+    environment:
+      - SPRING_PROFILES_ACTIVE=compose
+      - AWS_ACCESS_KEY_ID=applmgr
+      - AWS_SECRET_ACCESS_KEY=applmgr
+      - AWS_DEFAULT_REGION=us-east-1
     ports:
      - 8080:8080
   dynamo:

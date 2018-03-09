@@ -21,9 +21,10 @@ I left out a logging configuration.
 ```
 docker-compose up
 ```
+and then wait a while.
 
 #### or
-
+(untested)
 1) Install `docker`, `java jdk 8+`.
 2) Start the docker dynamoDB database.
 3) From the root directory run the gradle wrapper: `./gradlew bootRun`

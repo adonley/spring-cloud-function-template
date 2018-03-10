@@ -8,6 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GenericResponse<T> {
+
+    public GenericResponse(T data) {
+        this.setData(data);
+        this.setError(false);
+        this.setMessage("Ok");
+    }
+
     private String message;
     private boolean error;
     private T Data;

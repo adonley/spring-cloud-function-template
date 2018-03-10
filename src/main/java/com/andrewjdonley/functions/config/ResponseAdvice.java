@@ -19,7 +19,7 @@ public class ResponseAdvice extends AbstractMappingJacksonResponseBodyAdvice {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return true;
+        return !GenericResponse.class.isAssignableFrom(returnType.getParameterType());
     }
 
     @Override
@@ -29,14 +29,11 @@ public class ResponseAdvice extends AbstractMappingJacksonResponseBodyAdvice {
             MethodParameter returnType,
             ServerHttpRequest request,
             ServerHttpResponse response) {
-        // TODO: Bad pattern to not wrap error return type
-        if(!(bodyContainer.getValue() instanceof GenericResponse)) {
-            GenericResponse<Object> genericResponse = new GenericResponse<>();
-            genericResponse.setData(bodyContainer.getValue());
-            genericResponse.setError(false);
-            genericResponse.setMessage("OK");
-            bodyContainer.setValue(genericResponse);
-            response.setStatusCode(HttpStatus.OK);
-        }
+        GenericResponse<Object> genericResponse = new GenericResponse<>();
+        genericResponse.setData(bodyContainer.getValue());
+        genericResponse.setError(false);
+        genericResponse.setMessage("OK");
+        bodyContainer.setValue(genericResponse);
+        response.setStatusCode(HttpStatus.OK);
     }
 }
